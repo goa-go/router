@@ -1,0 +1,17 @@
+language: go
+
+matrix:
+  fast_finish: true
+  include:
+  - go: 1.10.x
+  - go: 1.11.x
+  - go: 1.12.x
+
+install:
+  - go get ./...
+
+script:
+  - go test -race -coverprofile=coverage.txt -covermode=atomic
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

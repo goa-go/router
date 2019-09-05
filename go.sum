@@ -1,0 +1,6 @@
+github.com/goa-go/goa v0.3.0 h1:ogtjOuWpLpO3Arbn17Wmvo9eLzP3ZHIf7skiMr+aVL8=
+github.com/goa-go/goa v0.3.0/go.mod h1:FRt43/orTAyeU4YS1640dujiGSOXoIzcX5V3+gcKiK4=
+github.com/goa-go/goa v0.3.1 h1:6GMHVjAqwk1gUEHWZknfn4jxDe0Jp3fIPwvQH9NqkTs=
+github.com/goa-go/goa v0.3.1/go.mod h1:FRt43/orTAyeU4YS1640dujiGSOXoIzcX5V3+gcKiK4=
+github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
+github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
