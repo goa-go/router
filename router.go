@@ -74,38 +74,38 @@ func New() *Router {
 }
 
 // GET registers a new request handle with the given path and get method.
-func (r *Router) GET(path string, handler Handler, middlewares ...goa.Middleware) {
-	r.Register("GET", path, handler, middlewares)
+func (r *Router) GET(path string, handler Handler) {
+	r.Register("GET", path, handler)
 }
 
 // HEAD registers a new request handle with the given path and head method.
-func (r *Router) HEAD(path string, handler Handler, middlewares ...goa.Middleware) {
-	r.Register("HEAD", path, handler, middlewares)
+func (r *Router) HEAD(path string, handler Handler) {
+	r.Register("HEAD", path, handler)
 }
 
 // OPTIONS registers a new request handle with the given path and options method.
-func (r *Router) OPTIONS(path string, handler Handler, middlewares ...goa.Middleware) {
-	r.Register("OPTIONS", path, handler, middlewares)
+func (r *Router) OPTIONS(path string, handler Handler) {
+	r.Register("OPTIONS", path, handler)
 }
 
 // POST registers a new request handle with the given path and post method.
-func (r *Router) POST(path string, handler Handler, middlewares ...goa.Middleware) {
-	r.Register("POST", path, handler, middlewares)
+func (r *Router) POST(path string, handler Handler) {
+	r.Register("POST", path, handler)
 }
 
 // PUT registers a new request handle with the given path and put method.
-func (r *Router) PUT(path string, handler Handler, middlewares ...goa.Middleware) {
-	r.Register("PUT", path, handler, middlewares)
+func (r *Router) PUT(path string, handler Handler) {
+	r.Register("PUT", path, handler)
 }
 
 // PATCH registers a new request handle with the given path and patch method.
-func (r *Router) PATCH(path string, handler Handler, middlewares ...goa.Middleware) {
-	r.Register("PATCH", path, handler, middlewares)
+func (r *Router) PATCH(path string, handler Handler) {
+	r.Register("PATCH", path, handler)
 }
 
 // DELETE registers a new request handle with the given path and delete method.
-func (r *Router) DELETE(path string, handler Handler, middlewares ...goa.Middleware) {
-	r.Register("DELETE", path, handler, middlewares)
+func (r *Router) DELETE(path string, handler Handler) {
+	r.Register("DELETE", path, handler)
 }
 
 // Register registers a new request handle with the given path and method.
@@ -116,7 +116,7 @@ func (r *Router) DELETE(path string, handler Handler, middlewares ...goa.Middlew
 // This function is intended for bulk loading and to allow the usage of less
 // frequently used, non-standardized or custom methods (e.g. for internal
 // communication with a proxy).
-func (r *Router) Register(method, path string, handler Handler, middlewares goa.Middlewares) {
+func (r *Router) Register(method, path string, handler Handler) {
 	if path[0] != '/' {
 		panic("path must begin with '/' in path '" + path + "'")
 	}
@@ -131,31 +131,7 @@ func (r *Router) Register(method, path string, handler Handler, middlewares goa.
 		r.trees[method] = root
 	}
 
-	if len(middlewares) > 0 {
-		middlewareHandler := func(c *goa.Context) {
-			compose(middlewares)(c)
-			handler(c)
-		}
-		root.addRoute(path, middlewareHandler)
-	} else {
-		root.addRoute(path, handler)
-	}
-}
-
-func compose(m goa.Middlewares) Handler {
-	var dispatch func(i int)
-	return func(c *goa.Context) {
-		dispatch = func(i int) {
-			if i == len(m) {
-				return
-			}
-			fn := m[i]
-			fn(c, func() {
-				dispatch(i + 1)
-			})
-		}
-		dispatch(0)
-	}
+	root.addRoute(path, handler)
 }
 
 func (r *Router) allowed(path, reqMethod string) (allow string) {
@@ -216,7 +192,7 @@ func (r *Router) ServeFiles(path string, root http.FileSystem) {
 	r.GET(path, func(c *goa.Context) {
 		c.URL.Path = c.Param("filepath")
 		fileServer.ServeHTTP(c.ResponseWriter, c.Request)
-		// c.Handled = true
+		c.Handled = true
 	})
 }
 
@@ -294,8 +270,8 @@ func (r *Router) Handle(c *goa.Context) {
 // Routes returns a goa.Middleware.
 // app.Use(router.Routes())
 func (r *Router) Routes() goa.Middleware {
-	return func(c *goa.Context, next func()) {
+	return func(c *goa.Context) {
 		r.Handle(c)
-		next()
+		c.Next()
 	}
 }
